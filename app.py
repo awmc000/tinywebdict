@@ -44,8 +44,21 @@ def list_words():
     cur = db_conn.cursor()
     cur.execute("SELECT * FROM marked_words")
     rows = cur.fetchall()
+    table_rows = []
+    for r in rows:
+        word = str(r[0])
+        definition = dictionary.definition_lookup(word)[0]
+        table_rows.append(f"""
+            <tr>
+                <td>{word}</td>
+                <td>{definition['pinyin']}</td>
+                <td>{definition['definition']}</td>
+            </tr>
+        """)
+    table_rows_html = "".join(table_rows)
     return f"""
-        <ul>
-            {'\n'.join([ '<li>' + str(r) + '</li>' for r in rows])}
-        </lu>
+        <table style="border: 1px solid black; border-collapse: collapse" rules="all">
+            <tr><th>hanzi</th><th>pinyin</th><th>definition</th></tr>
+            {table_rows_html}
+        </table>
     """
